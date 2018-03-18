@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Stores, Cuisines } from './ApiHandler';
+import { Orders } from './ApiHandler';
 
 export class Order extends Component {
 
@@ -18,6 +18,42 @@ export class Order extends Component {
         this.state.total += this.props.order[item].item.price * this.props.order[item].qty
       });
     }
+
+    this.placeOrder = this.placeOrder.bind(this);
+
+  }
+
+  placeOrder() {
+    var order = this.props.order;
+    var stores = this.state.stores;
+    var orderPromises = [];
+
+    Object.keys(stores).map(storeId => {
+      var orderItems = [];
+      Object.keys(order).map(productId => {
+        if (order[productId].store.id == storeId) {
+          orderItems.push({
+            productId: parseInt(productId),
+            quantity: order[productId].qty
+          });
+        }
+      });
+
+      orderPromises.push(Orders.create({
+        contact: 'Contact name',
+        deliveryAddress: 'delivery address',
+        storeId: parseInt(storeId),
+        orderItems: orderItems,
+        status: 'waiting'
+      }))
+    });
+
+    Promise.all(orderPromises).then(() => {
+      window.alert('Order sent! Thank you')
+    }).catch((err) => {
+      window.alert('Error while sending orders')
+      console.log('nem tudo ok', err)
+    })
 
   }
 
@@ -60,9 +96,9 @@ export class Order extends Component {
                 <button type="button" className="btn btn-sm btn-outline-secondary" onClick={e => this.props.removeItem(id)}>Remove</button>
               </td>
             </tr>
-          ) : <tr><td colspan="5">Loading products...</td></tr>}
+          ) : <tr><td colSpan="5">Loading products...</td></tr>}
             <tr>
-              <td colspan="3" className="text-right">
+              <td colSpan="3" className="text-right">
                 <strong>Total:</strong>
               </td>
               <td> {this.state.total.toFixed(2)} </td>
@@ -79,12 +115,12 @@ export class Order extends Component {
             These orders may have different delivery times.
             </p>
             <p className="text-center">
-              <button type="button" className="btn btn-lg btn-primary">Place {Object.keys(this.state.stores).length} orders</button>
+              <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place {Object.keys(this.state.stores).length} orders</button>
             </p>
           </div>
         ) : (
           <p className="text-center">
-            <button type="button" className="btn btn-lg btn-primary">Place order</button>
+            <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place order</button>
           </p>
         )}
 

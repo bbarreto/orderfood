@@ -157,4 +157,34 @@ var Stores = {
 
 }
 
-export { User, Cuisines, Stores }
+var Orders = {
+
+  create: (order) => {
+
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", "Bearer "+localStorage.token);
+
+      fetch(apiEndpoint+'/Order', {
+        method: 'post',
+        body: JSON.stringify(order),
+        headers: headers
+      }).then(function(response) {
+        if (response.status === 401) {
+          reject({'error': 'You need to authenticate before placing this order.'})
+        } else if (response.status === 200) {
+          response.text().then(text => resolve(JSON.parse(text)))
+        } else {
+          response.text().then(text => reject(JSON.parse(text)));
+        }
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+
+  }
+
+}
+
+export { User, Cuisines, Stores, Orders }
