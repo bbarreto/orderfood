@@ -32,9 +32,8 @@ class App extends Component {
   }
 
   logout() {
-    this.setState({auth: null, order: {}});
+    this.setState({auth: null});
     localStorage.removeItem('token');
-    localStorage.removeItem('order');
   }
 
   addToOrder(qty, item, store) {

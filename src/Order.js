@@ -107,7 +107,7 @@ export class Order extends Component {
           </tbody>
         </table>
 
-        {Object.keys(this.state.stores).length > 1 ? (
+        {this.props.auth && Object.keys(this.state.stores).length > 1 ? (
           <div className="alert alert-warning" role="alert">
             <p>
             <strong>BE CAREFUL!</strong> Your order has items from more than one restaurant.
@@ -118,11 +118,15 @@ export class Order extends Component {
               <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place {Object.keys(this.state.stores).length} orders</button>
             </p>
           </div>
-        ) : (
+        ) : this.props.auth ? (
           <p className="text-center">
             <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place order</button>
           </p>
-        )}
+        ) : (
+          <p className="text-center">
+            <Link to="/auth" className="btn btn-lg btn-primary">Log In to place order</Link>
+          </p>
+        ) }
 
 
 
