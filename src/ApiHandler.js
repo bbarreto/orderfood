@@ -2,41 +2,49 @@ import axios from 'axios';
 
 var apiEndpoint = 'http://api-vanhack-event-sp.azurewebsites.net/api/v1'
 
-
-
 var User = {
 
   auth: (email, password) => {
-
-    return new Promise(resolve, reject) {
-      axios.post(apiEndpoint+'/Customer/auth', {
-        email: email,
-        password: password
-      })
+    return new Promise((resolve, reject) => {
+      axios.post(apiEndpoint+'/Customer/auth?email='+encodeURI(email)+'&password='+encodeURI(password))
       .then(function (response) {
-        console.log('success', response);
-        try {
-          console.log(response.response.data)
-          return JSON.parse(response.response.data)
-        } catch (err) {
-          console.log(err)
+        if (response.response) {
+          resolve(response.response.data)
+        } else {
+          reject({ error: 'Unable to understand the answer from server. Try again.' })
         }
       })
       .catch(function (error) {
-        console.log('error', error.response)
         if (error.response) {
-          try {
-            return JSON.parse(error.response.data)
-          } catch (err) {
-            console.log(err)
-          }
+          reject(error.response.data)
         } else {
-          return false;
+          reject({error: 'Unable to connect to backend.'})
         }
       })
-    }
+    })
+  },
 
+  signup: (user) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
 
+      fetch(apiEndpoint+'/Customer', {
+        method: 'post',
+        body: JSON.stringify(user),
+        headers: headers
+      }).then(function(response) {
+        if (response.status === 200) {
+          response.text().then(text => resolve(text))
+        } else {
+          var text = response.text().then(text => {
+              reject(JSON.parse(text))
+          });
+        }
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
   }
 
 }
