@@ -43,7 +43,7 @@ export class Store extends Component {
               <h5 className="card-title"><Link to={"/store/"+this.state.store.id+"/product/"+item.id}>{item.name}</Link></h5>
               <h6 className="card-subtitle mb-2 text-muted">$ {item.price}</h6>
               <p className="card-text">{item.description}</p>
-              <button href="#" className="btn btn-primary">Add to cart</button>
+              <button href="#" className="btn btn-primary" onClick={e => this.props.buy(1, item)}>Add to order</button>
             </div>
           </div>
         ) : 'Loading products...'}

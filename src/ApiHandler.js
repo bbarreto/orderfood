@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-var apiEndpoint = 'http://api-vanhack-event-sp.azurewebsites.net/api/v1'
+var apiEndpoint = 'https://api-vanhack-event-sp.azurewebsites.net/api/v1'
 
 var User = {
 

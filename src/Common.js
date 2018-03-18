@@ -22,7 +22,7 @@ export class Header extends Component {
             </li>
           </ul>
 
-          <form class="form-inline my-2 my-lg-0">
+          <form className="form-inline my-2 my-lg-0">
             {this.props.auth !==null ?
               <Link to="/" className="nav-link" onClick={this.props.onLogout}>Sign out</Link>
             :

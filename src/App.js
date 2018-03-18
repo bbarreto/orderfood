@@ -17,28 +17,39 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      auth: null,
-      order: { }
+      auth: localStorage.token?localStorage.token:null,
+      order: localStorage.order?JSON.parse(localStorage.order):{}
     }
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
+    this.addToOrder = this.addToOrder.bind(this);
   }
 
   login(token) {
     this.setState({auth: token});
+    localStorage.setItem("token", token);
   }
 
   logout() {
     this.setState({auth: null, order: {}});
+    localStorage.removeItem('token');
+    localStorage.removeItem('order');
   }
 
-  addToOrder(id, qty) {
+  addToOrder(qty, item) {
     var order = this.state.order;
-    order.push({
-      id: id,
-      qty: qty
-    })
+
+    if (order.hasOwnProperty(item.id)) {
+      order[item.id].qty += qty;
+    } else {
+      order[item.id] = {
+        qty: qty,
+        item: item
+      }
+    }
+
     this.setState({order: order})
+    localStorage.setItem("order", JSON.stringify(order));
   }
 
   withProps(Component, props) {
@@ -49,14 +60,14 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <div>
           <Header auth={this.state.auth} onLogout={this.logout} order={this.state.order} />
           <Switch>
             <Route exact path="/auth" component={this.withProps(Auth, { ...this.state, onAuth: token => this.login(token) })} />
             <Route exact path="/signup" component={this.withProps(Signup, { ...this.state, onAuth: token => this.login(token) })} />
             <Route exact path="/cuisine/:id" component={this.withProps(Cuisine, this.state)} />
-            <Route exact path="/store/:id" component={this.withProps(Store, this.state)} />
+            <Route exact path="/store/:id" component={this.withProps(Store, { ...this.state, buy: (qty, item) => this.addToOrder(qty, item) } )} />
             <Route exact path="/order" component={this.withProps(Order, this.state)} />
             <Route exact path="/" component={this.withProps(Cuisines, this.state)} />
           </Switch>
