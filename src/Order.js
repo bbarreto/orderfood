@@ -6,16 +6,28 @@ export class Order extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      stores: {},
+      total: 0
+    }
+
+    if (Object.keys(this.props.order).length > 0) {
+      Object.keys(this.props.order).map(item => {
+        this.state.stores[this.props.order[item].store.id] = true;
+        this.state.total += this.props.order[item].item.price * this.props.order[item].qty
+      });
+    }
+
   }
 
   render() {
-    console.log(this.props.order);
     if (Object.keys(this.props.order).length === 0) {
       return (
           <div className="container">
             <p className="text-center py-5">Your order is empty :(</p>
             <p className="text-center">
-              <Link to="/" class="btn btn-primary">Find some delicious food</Link>
+              <Link to="/" className="btn btn-primary">Find some delicious food</Link>
             </p>
           </div>
       )
@@ -35,21 +47,48 @@ export class Order extends Component {
             </tr>
           </thead>
           <tbody>
-        {this.props.order ? Object.keys(this.props.order).map((id) =>
-          <tr key={id}>
-            <td><Link to={"/store/"+this.props.order[id].item.storeId+"/product/"+this.props.order[id].item.id}>{this.props.order[id].item.name}</Link></td>
-            <td>{this.props.order[id].item.price}</td>
-            <td><input type="text" className="form-control" style={{width:'4rem'}} value={this.props.order[id].qty} /></td>
-            <td>{this.props.order[id].item.price*this.props.order[id].qty}</td>
-            <td><button type="button" className="btn btn-link">Remove item</button></td>
-          </tr>
-        ) : 'Loading products...'}
+            {this.props.order ? Object.keys(this.props.order).map((id) =>
+            <tr key={id}>
+              <td>
+                <Link to={"/store/"+this.props.order[id].item.storeId+"/product/"+this.props.order[id].item.id}>{this.props.order[id].item.name}</Link>
+                <p><small className="text-muted">{this.props.order[id].store.name}</small></p>
+              </td>
+              <td>{this.props.order[id].item.price.toFixed(2)}</td>
+              <td><input readOnly type="text" className="form-control" style={{width:'4rem'}} value={this.props.order[id].qty} /></td>
+              <td>{ (this.props.order[id].item.price*this.props.order[id].qty).toFixed(2) }</td>
+              <td>
+                <button type="button" className="btn btn-sm btn-outline-secondary" onClick={e => this.props.removeItem(id)}>Remove</button>
+              </td>
+            </tr>
+          ) : <tr><td colspan="5">Loading products...</td></tr>}
+            <tr>
+              <td colspan="3" className="text-right">
+                <strong>Total:</strong>
+              </td>
+              <td> {this.state.total.toFixed(2)} </td>
+              <td></td>
+            </tr>
           </tbody>
         </table>
 
-        <p class="text-center">
-          <button type="button" className="btn btn-lg btn-primary">Place order</button>
-        </p>
+        {Object.keys(this.state.stores).length > 1 ? (
+          <div className="alert alert-warning" role="alert">
+            <p>
+            <strong>BE CAREFUL!</strong> Your order has items from more than one restaurant.
+            When you click "Place order", it will be placed {Object.keys(this.state.stores).length} different orders.
+            These orders may have different delivery times.
+            </p>
+            <p className="text-center">
+              <button type="button" className="btn btn-lg btn-primary">Place {Object.keys(this.state.stores).length} orders</button>
+            </p>
+          </div>
+        ) : (
+          <p className="text-center">
+            <button type="button" className="btn btn-lg btn-primary">Place order</button>
+          </p>
+        )}
+
+
 
       </div>
     )

@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 var apiEndpoint = 'https://api-vanhack-event-sp.azurewebsites.net/api/v1'
 
 var User = {
@@ -21,7 +19,7 @@ var User = {
         if (response.status === 200) {
           response.text().then(text => resolve(text))
         } else {
-          var text = response.text().then(text => {
+          response.text().then(text => {
               reject(JSON.parse(text))
           });
         }
@@ -45,7 +43,7 @@ var User = {
         if (response.status === 200) {
           response.text().then(text => resolve(text))
         } else {
-          var text = response.text().then(text => {
+          response.text().then(text => {
               reject(JSON.parse(text))
           });
         }
@@ -126,6 +124,24 @@ var Stores = {
       var headers = new Headers();
       headers.append("Content-Type", "application/json");
       var endpoint = apiEndpoint+'/Store/'+storeId+'/products';
+
+      fetch(endpoint, {
+        method: 'get'
+      }).then(function(response) {
+        return response.text().then(text => {
+          resolve(JSON.parse(text))
+        })
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+  },
+
+  getProductById: (id) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      var endpoint = apiEndpoint+'/Product/'+id;
 
       fetch(endpoint, {
         method: 'get'
