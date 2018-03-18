@@ -37,11 +37,16 @@ export class Store extends Component {
         <h2>{this.state.store.name}</h2>
         <p>{this.state.store.address}</p>
 
-        <ul>
-          {this.state.products ? this.state.products.map((item, i) =>
-            <li key={i}><Link to={"/cuisine/"+item.id}>{item.name}</Link></li>
-          ) : 'Loading products...'}
-        </ul>
+        {this.state.products ? this.state.products.map((item, i) =>
+          <div key={i} className="card mb-3">
+            <div className="card-body">
+              <h5 className="card-title"><Link to={"/store/"+this.state.store.id+"/product/"+item.id}>{item.name}</Link></h5>
+              <h6 className="card-subtitle mb-2 text-muted">$ {item.price}</h6>
+              <p className="card-text">{item.description}</p>
+              <button href="#" className="btn btn-primary">Add to cart</button>
+            </div>
+          </div>
+        ) : 'Loading products...'}
 
       </div>
     )

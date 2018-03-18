@@ -20,13 +20,11 @@ export default class List extends Component {
 
   render() {
     return (
-      <div className="container">
-        <h2>Cuisines</h2>
-        <ul>
+      <div className="container text-center">
+        <h2 className="mb-3">Choose the type of food you like:</h2>
           {this.state.cuisines ? this.state.cuisines.map((item, i) =>
-            <li key={i}><Link to={"/cuisine/"+item.id}>{item.name}</Link></li>
+            <Link key={i} to={"/cuisine/"+item.id} className="btn btn-lg mr-2 mb-2 btn-outline-primary">{item.name}</Link>
           ) : 'Loading...'}
-        </ul>
       </div>
     )
   }
@@ -52,11 +50,11 @@ export class Cuisine extends Component {
   render() {
     return (
       <div className="container">
-        <h2>Choose a store:</h2>
+        <h2 className="mb-3">Choose a restaurant:</h2>
         <ul>
           {this.state.cuisines ? this.state.cuisines.map((item, i) =>
             <li key={i}>
-              <Link to={"/store/"+item.id}><strong>{item.name}</strong></Link>
+              <h3><Link to={"/store/"+item.id}>{item.name}</Link></h3>
               <p><small>{item.address}</small></p>
             </li>
           ) : 'Loading...'}

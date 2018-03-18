@@ -22,6 +22,7 @@ export default class Auth extends Component {
     User.auth(this.state.email, this.state.password)
       .then(response => {
         this.props.onAuth(response)
+        this.props.history.push('/')
       })
       .catch(err => {
         this.setState({error: err.error});
@@ -90,6 +91,7 @@ export class Signup extends Component {
     })
       .then(response => {
         this.props.onAuth(response)
+        this.props.history.push('/')
       })
       .catch(err => {
         this.setState({error: err.error});

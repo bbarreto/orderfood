@@ -17,16 +17,18 @@ export class Header extends Component {
             <li className="nav-item active">
               <Link className="nav-link" to="/">Home</Link>
             </li>
-            {this.props.auth !==null ?
-              <li className="nav-item">
-                <Link to="/" className="nav-link" onClick={this.props.onLogout}>Sign out</Link>
-              </li>
-            :
-              <li className="nav-item">
-                <Link className="nav-link" to="/auth">Sign in</Link>
-              </li>
-            }
+            <li className="nav-item active">
+              <Link className="nav-link" to="/order">Your order ({ Object.keys(this.props.order).length })</Link>
+            </li>
           </ul>
+
+          <form class="form-inline my-2 my-lg-0">
+            {this.props.auth !==null ?
+              <Link to="/" className="nav-link" onClick={this.props.onLogout}>Sign out</Link>
+            :
+              <Link className="nav-link" to="/auth">Sign in</Link>
+            }
+          </form>
         </div>
       </nav>
     )
