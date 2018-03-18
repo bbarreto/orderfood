@@ -9,21 +9,31 @@ export class Order extends Component {
 
     this.state = {
       stores: {},
-      total: 0
+      total: 0,
+      contactName: '',
+      deliveryAddress: ''
     }
 
     if (Object.keys(this.props.order).length > 0) {
       Object.keys(this.props.order).map(item => {
-        this.state.stores[this.props.order[item].store.id] = true;
+        this.state.stores[this.props.order[item].store.id] = true
         this.state.total += this.props.order[item].item.price * this.props.order[item].qty
       });
     }
 
     this.placeOrder = this.placeOrder.bind(this);
-
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
-  placeOrder() {
+  handleInputChange(e) {
+    this.setState({
+      error: null,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  placeOrder(e) {
+    e.preventDefault();
     var order = this.props.order;
     var stores = this.state.stores;
     var orderPromises = [];
@@ -31,18 +41,18 @@ export class Order extends Component {
     Object.keys(stores).map(storeId => {
       var orderItems = [];
       Object.keys(order).map(productId => {
-        if (order[productId].store.id == storeId) {
+        if (order[productId].store.id === storeId) {
           orderItems.push({
-            productId: parseInt(productId),
+            productId: parseInt(productId, 10),
             quantity: order[productId].qty
           });
         }
       });
 
       orderPromises.push(Orders.create({
-        contact: 'Contact name',
-        deliveryAddress: 'delivery address',
-        storeId: parseInt(storeId),
+        contact: this.state.contactName,
+        deliveryAddress: this.state.deliveryAddress,
+        storeId: parseInt(storeId, 10),
         orderItems: orderItems,
         status: 'waiting'
       }))
@@ -107,6 +117,21 @@ export class Order extends Component {
           </tbody>
         </table>
 
+        <form className="form my-3" onSubmit={e=>this.placeOrder(e)}>
+        { this.props.auth ? (
+          <div>
+            <h3 className="mb-3">Delivery data:</h3>
+            <div className="form-group mb-2 mr-2">
+              <label htmlFor="contactName" className="mr-2">Contact name:</label>
+              <input onChange={e => this.handleInputChange(e)} type="text" className="form-control" id="contactName" name="contactName" value={this.state.contactName} required />
+            </div>
+            <div className="form-group mb-2 mr-2">
+              <label htmlFor="deliveryAddress" className="mr-2">Delivery Address:</label>
+              <input onChange={e => this.handleInputChange(e)} type="text" className="form-control" id="deliveryAddress" name="deliveryAddress" value={this.state.deliveryAddress} required />
+            </div>
+          </div>
+        ) : ''}
+
         {this.props.auth && Object.keys(this.state.stores).length > 1 ? (
           <div className="alert alert-warning" role="alert">
             <p>
@@ -115,21 +140,19 @@ export class Order extends Component {
             These orders may have different delivery times.
             </p>
             <p className="text-center">
-              <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place {Object.keys(this.state.stores).length} orders</button>
+              <button type="submit" className="btn btn-lg btn-primary">Place {Object.keys(this.state.stores).length} orders</button>
             </p>
           </div>
         ) : this.props.auth ? (
           <p className="text-center">
-            <button type="button" className="btn btn-lg btn-primary" onClick={e=>this.placeOrder()}>Place order</button>
+            <button type="submit" className="btn btn-lg btn-primary">Place order</button>
           </p>
         ) : (
           <p className="text-center">
             <Link to="/auth" className="btn btn-lg btn-primary">Log In to place order</Link>
           </p>
         ) }
-
-
-
+        </form>
       </div>
     )
   }
