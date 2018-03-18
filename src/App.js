@@ -7,8 +7,30 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
 
 import Auth, {Signup} from './Auth';
+import Cuisines, { Cuisine } from './Cuisines';
+import { Store } from './Stores';
+import { Header } from './Common';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      auth: null,
+      order: null
+    }
+    this.login = this.login.bind(this);
+    this.logout = this.logout.bind(this);
+  }
+
+  login(token) {
+    this.setState({auth: token});
+  }
+
+  logout() {
+    this.setState({auth: null, order: null});
+  }
+
   withProps(Component, props) {
     return function(matchProps) {
       return <Component {...props} {...matchProps} />
@@ -18,13 +40,17 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Switch>
-          <Route path="/auth" component={this.withProps(Auth, this.state)} />
-          <Route path="/signup" component={this.withProps(Signup, this.state)} />
-        </Switch>
+        <div>
+          <Header auth={this.state.auth} onLogout={this.logout} />
+          <Switch>
+            <Route exact path="/auth" component={this.withProps(Auth, { ...this.state, onAuth: token => this.login(token) })} />
+            <Route exact path="/signup" component={this.withProps(Signup, { ...this.state, onAuth: token => this.login(token) })} />
+            <Route exact path="/cuisine/:id" component={this.withProps(Cuisine, this.state)} />
+            <Route exact path="/store/:id" component={this.withProps(Store, this.state)} />
+            <Route exact path="/" component={this.withProps(Cuisines, this.state)} />
+          </Switch>
+        </div>
       </Router>
-
-
     );
   }
 }

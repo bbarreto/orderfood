@@ -5,23 +5,31 @@ var apiEndpoint = 'http://api-vanhack-event-sp.azurewebsites.net/api/v1'
 var User = {
 
   auth: (email, password) => {
+
     return new Promise((resolve, reject) => {
-      axios.post(apiEndpoint+'/Customer/auth?email='+encodeURI(email)+'&password='+encodeURI(password))
-      .then(function (response) {
-        if (response.response) {
-          resolve(response.response.data)
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+
+      var formData  = new FormData();
+      formData.append('email', email);
+      formData.append('password', password);
+
+      fetch(apiEndpoint+'/Customer/auth', {
+        method: 'post',
+        body: formData
+      }).then(function(response) {
+        if (response.status === 200) {
+          response.text().then(text => resolve(text))
         } else {
-          reject({ error: 'Unable to understand the answer from server. Try again.' })
+          var text = response.text().then(text => {
+              reject(JSON.parse(text))
+          });
         }
-      })
-      .catch(function (error) {
-        if (error.response) {
-          reject(error.response.data)
-        } else {
-          reject({error: 'Unable to connect to backend.'})
-        }
-      })
+      }).catch(function(err) {
+        reject(err)
+      });
     })
+
   },
 
   signup: (user) => {
@@ -49,4 +57,88 @@ var User = {
 
 }
 
-export { User }
+var Cuisines = {
+
+  get: (q) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      var endpoint = apiEndpoint+'/Cousine';
+      if (!isNaN(q)) {
+        endpoint += '/'+q+'/stores';
+      }
+      fetch(endpoint, {
+        method: 'get'
+      }).then(function(response) {
+        return response.text().then(text => {
+          resolve(JSON.parse(text))
+        })
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+  }
+
+}
+
+var Stores = {
+
+  getByCuisineId: (cuisineId) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      var endpoint = apiEndpoint+'/Cousine';
+      if (!isNaN(cuisineId)) {
+        endpoint += '/'+cuisineId+'/stores';
+      }
+      fetch(endpoint, {
+        method: 'get'
+      }).then(function(response) {
+        return response.text().then(text => {
+          resolve(JSON.parse(text))
+        })
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+  },
+
+  getById: (storeId) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      var endpoint = apiEndpoint+'/Store/'+storeId;
+
+      fetch(endpoint, {
+        method: 'get'
+      }).then(function(response) {
+        return response.text().then(text => {
+          resolve(JSON.parse(text))
+        })
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+  },
+
+  getProducts: (storeId) => {
+    return new Promise((resolve, reject) => {
+      var headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      var endpoint = apiEndpoint+'/Store/'+storeId+'/products';
+
+      fetch(endpoint, {
+        method: 'get'
+      }).then(function(response) {
+        return response.text().then(text => {
+          resolve(JSON.parse(text))
+        })
+      }).catch(function(err) {
+        reject(err)
+      });
+    })
+  }
+
+}
+
+export { User, Cuisines, Stores }

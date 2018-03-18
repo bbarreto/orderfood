@@ -21,7 +21,7 @@ export default class Auth extends Component {
     e.preventDefault();
     User.auth(this.state.email, this.state.password)
       .then(response => {
-        window.alert('Logado!');
+        this.props.onAuth(response)
       })
       .catch(err => {
         this.setState({error: err.error});
@@ -89,11 +89,9 @@ export class Signup extends Component {
       password: this.state.password,
     })
       .then(response => {
-        console.log('success', response)
-        window.alert('Welcome!');
+        this.props.onAuth(response)
       })
       .catch(err => {
-        console.log('fail', err);
         this.setState({error: err.error});
       });
   }
