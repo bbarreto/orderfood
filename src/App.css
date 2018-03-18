@@ -1,0 +1,35 @@
+.navbar.navbar-light.bg-light {
+  background: #CD0311!important;
+}
+
+.navbar .nav-link {
+  color: white!important;
+}
+
+.btn-primary, .btn-primary:focus, .btn-primary:hover, .btn-primary:active {
+  background-color: #CD0311;
+  border-color: #CD0311;
+}
+
+.btn {
+  border-radius: 0;
+}
+
+.btn-outline-primary {
+  border-color: #CD0311;
+  color: #CD0311;
+}
+
+.btn-outline-primary:hover {
+  background-color: #CD0311;
+  border-color: #CD0311;
+}
+
+a, a:hover, a:active, a:focus  {
+  color: #CD0311;
+}
+
+.navbar-brand img {
+  height: 56px;
+  margin: -20px 0 -12px;
+}

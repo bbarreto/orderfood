@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
+import Logo from './skip_logo_knockout.svg';
 
 export class Header extends Component {
 
@@ -7,7 +8,7 @@ export class Header extends Component {
     return (
 
       <nav className="navbar navbar-expand-lg navbar-light bg-light mb-5">
-        <Link className="navbar-brand" to="/">Food</Link>
+        <Link className="navbar-brand" to="/"><img src={Logo} alt="Skip the dishes" /></Link>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
